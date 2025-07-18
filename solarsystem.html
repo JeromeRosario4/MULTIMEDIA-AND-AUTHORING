@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar System Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .video-container {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .video-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .play-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        .play-icon {
+            width: 0;
+            height: 0;
+            border-left: 20px solid #4f46e5;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 4px;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #60a5fa, #3b82f6);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 2rem;
+            width: 12px;
+            height: 12px;
+            background: #60a5fa;
+            border-radius: 50%;
+            border: 3px solid #1a1a2e;
+        }
+        
+        .timeline-item.completed::before {
+            background: #10b981;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .planet-tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        
+        .tag-mercury { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+        .tag-venus { background: rgba(255, 152, 0, 0.2); color: #ff9800; }
+        .tag-earth { background: rgba(33, 150, 243, 0.2); color: #2196f3; }
+        .tag-mars { background: rgba(244, 67, 54, 0.2); color: #f44336; }
+        .tag-jupiter { background: rgba(255, 87, 34, 0.2); color: #ff5722; }
+        .tag-saturn { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+        .tag-uranus { background: rgba(0, 188, 212, 0.2); color: #00bcd4; }
+        .tag-neptune { background: rgba(63, 81, 181, 0.2); color: #3f51b5; }
+        .tag-pluto { background: rgba(158, 158, 158, 0.2); color: #9e9e9e; }
+        
+        .overview-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+        
+        .age-calculator {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .age-display {
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .age-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+    <!-- Header -->
+    <header class="p-6 flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-blue-400">Solar System Studio</h1>
+        <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full transition-colors">
+            <a href="home.html" class="back-btn">← Back to Home</a>
+        </button>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-6 pb-12">
+        <!-- Complete Journey Section -->
+        <section class="mb-16">
+            <div class="flex flex-col lg:flex-row gap-12 items-center">
+                <div class="lg:w-1/2">
+                    <div class="video-container aspect-video">
+                        <div class="play-button" onclick="playVideo('complete-journey')">
+                            <div class="play-icon"></div>
+                        </div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <h3 class="text-2xl font-bold text-white mb-2">Complete Journey</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2">
+                    <h2 class="text-5xl font-bold mb-6">Solar System Exploration</h2>
+                    <p class="text-xl text-gray-300 mb-8">
+                        Experience the complete journey through our solar system from the blazing Sun to the distant reaches of Pluto in this comprehensive visual showcase.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span class="text-gray-300">High-definition planetary cinematography</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span class="text-gray-300">Real astronomical data and measurements</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span class="text-gray-300">Interactive planetary comparison</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span class="text-gray-300">Scientific accuracy and educational value</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span class="text-gray-300">Immersive space exploration experience</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Age Calculator Section -->
+        <section class="mb-16">
+            <div class="age-calculator">
+                <h3 class="text-3xl font-bold text-center mb-6">
+                    Calculate Your Age on Other Planets
+                </h3>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <input 
+                        type="number" 
+                        id="earthAge" 
+                        placeholder="Enter your Earth age" 
+                        class="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white/20 transition-all text-center"
+                    />
+                    <button 
+                        onclick="calculatePlanetAges()" 
+                        class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-colors"
+                    >
+                        Calculate Ages
+                    </button>
+                </div>
+                <p class="text-center text-gray-400 mt-4">
+                    Enter your age to see how old you would be on each planet in our solar system!
+                </p>
+            </div>
+        </section>
+
+        <!-- Individual Planets Timeline -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold mb-12 text-center">Individual Planet Showcases</h2>
+            
+            <div class="timeline">
+                <!-- Mercury -->
+                <div class="timeline-item">
+                    <div class="flex flex-col lg:flex-row gap-8 items-center">
+                        <div class="lg:w-1/2">
+                            <div class="card">
+                                <div class="planet-tag tag-mercury">Closest to Sun</div>
+                                <h3 class="text-3xl font-bold mb-4 text-blue-400">Mercury</h3>
+                                <p class="text-gray-300 mb-6">
+                                    Journey to the innermost planet where temperatures swing from freezing to blazing hot. Explore its cratered surface and extreme orbital mechanics.
+                                </p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                                <div class="age-display">
+                                    <div class="text-gray-300 mb-2">Your age on Mercury:</div>
+                                    <div class="age-number" id="mercury-age-display">Enter your age above</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2">
+                            <div class="video-container aspect-video">
+                                <div class="play-button" onclick="playVideo('mercury')">
+                                    <div class="play-icon"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Venus -->
+                <div class="timeline-item">
+                    <div class="flex flex-col lg:flex-row-reverse gap-8 items-center">
+                        <div class="lg:w-1/2">
+                            <div class="card">
+                                <div class="planet-tag tag-venus">Hottest Planet</div>
+                                <h3 class="text-3xl font-bold mb-4 text-blue-400">Venus</h3>
+                                <p class="text-gray-300 mb-6">
+                                    Discover the hellish world of Venus with its thick toxic atmosphere, sulfuric acid clouds, and surface temperatures hot enough to melt lead.
+                                </p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 85%"></div>
+                                </div>
+                                <div class="age-display">
+                                    <div class="text-gray-300 mb-2">Your age on Venus:</div>
+                                    <div class="age-number" id="venus-age-display">Enter your age above</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2">
+                            <div class="video-container aspect-video">
+                                <div class="play-button" onclick="playVideo('venus')">
+                                    <div class="play-icon"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Earth -->
+                <div class="timeline-item">
+                    <div class="flex flex-col lg:flex-row gap-8 items-center">
+                        <div class="lg:w-1/2">
+                            <div class="card">
+                                <div class="planet-tag tag-earth">Our Home</div>
+                                <h3 class="text-3xl font-bold mb-4 text-blue-400">Earth</h3>
+                                <p class="text-gray-300 mb-6">
+                                    Experience our blue marble from space - the only known planet with life, featuring vast oceans, diverse climates, and complex ecosystems.
+                                </p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 70%"></div>
+                                </div>
+                                <div class="age-display">
+                                    <div class="text-gray-300 mb-2">Your age on Earth:</div>
+                                    <div class="age-number" id="earth-age-display">Enter your age above</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2">
+                            <div class="video-container aspect-video">
+                                <div class="play-button" onclick="playVideo('earth')">
+                                    <div class="play-icon"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mars -->
+                <div class="timeline-item">
+                    <div class="flex flex-col lg:flex-row-reverse gap-8 items-center">
+                        <div class="lg:w-1/2">
+                            <div class="card">
+                                <div class="planet-tag tag-mars">The Red Planet</div>
+                                <h3 class="text-3xl font-bold mb-4 text-blue-400">Mars</h3>
+                                <p class="text-gray-300 mb-6">
+                                    Explore the rusty red world that captivates scientists and dreamers alike. Witness its massive volcanoes, deep canyons, and polar ice caps.
+                                </p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 55%"></div>
+                                </div>
+                                <div class="age-display">
+                                    <div class="text-gray-300 mb-2">Your age on Mars:</div>
+                                    <div class="age-number" id="mars-age-display">Enter your age above</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2">
+                            <div class="video-container aspect-video">
+                                <div class="play-button" onclick="playVideo('mars')">
+                                    <div class="play-icon"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jupiter -->
+                <div class="timeline-item">
+                    <div class="flex flex-col lg:flex-row gap-8 items-center">
+                        <div class="lg:w-1/2">
+                            <div class="card">
+                                <div class="planet-tag tag-jupiter">Gas Giant</div>
+                                <h3 class="text-3xl font-bold mb-4 text-blue-400">Jupiter</h3>
+                                <p class="text-gray-300 mb-6">
+                                    Marvel at the king of planets with its Great Red Spot, swirling storms, and family of fascinating moons including the volcanic Io and icy Europa.
+                                </p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 40%"></div>
+                                </div>
+                                <div class="age-display">
+                                    <div class="text-gray-300 mb-2">Your age on Jupiter:</div>
+                                    <div class="age-number" id="jupiter-age-display">Enter your age above</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2">
+                            <div class="video-container aspect-video">
+                                <div class="play-button" onclick="playVideo('jupiter')">
+                                    <div class="play-icon"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saturn -->
+                <div class="timeline-item">
+                    <div class="flex flex-col lg:flex-row-reverse gap-8 items-center">
+                        <div class="lg:w-1/2">
+                            <div class="card">
+                                <div class="planet-tag tag-saturn">Ringed Wonder</div>
+                                <h3 class="text-3xl font-bold mb-4 text-blue-400">Saturn</h3>
+                                <p class="text-gray-300 mb-6">
+                                    Witness the breathtaking beauty of Saturn's magnificent ring system and discover its diverse collection of moons, including mysterious Titan.
+                                </p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 25%"></div>
+                                </div>
+                                <div class="age-display">
+                                    <div class="text-gray-300 mb-2">Your age on Saturn:</div>
+                                    <div class="age-number" id="saturn-age-display">Enter your age above</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2">
+                            <div class="video-container aspect-video">
+                                <div class="play-button" onclick="playVideo('saturn')">
+                                    <div class="play-icon"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Uranus -->
+                <div class="timeline-item">
+                    <div class="flex flex-col lg:flex-row gap-8 items-center">
+                        <div class="lg:w-1/2">
+                            <div class="card">
+                                <div class="planet-tag tag-uranus">Ice Giant</div>
+                                <h3 class="text-3xl font-bold mb-4 text-blue-400">Uranus</h3>
+                                <p class="text-gray-300 mb-6">
+                                    Explore the tilted ice giant that rolls on its side as it orbits the Sun, with its unique magnetic field and faint ring system.
+                                </p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 10%"></div>
+                                </div>
+                                <div class="age-display">
+                                    <div class="text-gray-300 mb-2">Your age on Uranus:</div>
+                                    <div class="age-number" id="uranus-age-display">Enter your age above</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2">
+                            <div class="video-container aspect-video">
+                                <div class="play-button" onclick="playVideo('uranus')">
+                                    <div class="play-icon"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Neptune -->
+                <div class="timeline-item">
+                    <div class="flex flex-col lg:flex-row-reverse gap-8 items-center">
+                        <div class="lg:w-1/2">
+                            <div class="card">
+                                <div class="planet-tag tag-neptune">Windy World</div>
+                                <h3 class="text-3xl font-bold mb-4 text-blue-400">Neptune</h3>
+                                <p class="text-gray-300 mb-6">
+                                    Journey to the windiest planet in our solar system, where supersonic winds reach incredible speeds in the deep blue atmosphere.
+                                </p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 5%"></div>
+                                </div>
+                                <div class="age-display">
+                                    <div class="text-gray-300 mb-2">Your age on Neptune:</div>
+                                    <div class="age-number" id="neptune-age-display">Enter your age above</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2">
+                            <div class="video-container aspect-video">
+                                <div class="play-button" onclick="playVideo('neptune')">
+                                    <div class="play-icon"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pluto -->
+                <div class="timeline-item">
+                    <div class="flex flex-col lg:flex-row gap-8 items-center">
+                        <div class="lg:w-1/2">
+                            <div class="card">
+                                <div class="planet-tag tag-pluto">Dwarf Planet</div>
+                                <h3 class="text-3xl font-bold mb-4 text-blue-400">Pluto</h3>
+                                <p class="text-gray-300 mb-6">
+                                    Venture to the edge of our solar system to explore the heart-shaped features of Pluto and its complex relationship with moon Charon.
+                                </p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <div class="age-display">
+                                    <div class="text-gray-300 mb-2">Your age on Pluto:</div>
+                                    <div class="age-number" id="pluto-age-display">Enter your age above</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2">
+                            <div class="video-container aspect-video">
+                                <div class="play-button" onclick="playVideo('pluto')">
+                                    <div class="play-icon"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Planet Age Calculator -->
+        <section class="bg-indigo-50 py-12 px-6 rounded-3xl">
+            <div class="max-w-5xl mx-auto">
+                <h3 class="text-3xl font-bold text-center mb-6 text-gray-800">
+                    Age Comparison Summary
+                </h3>
+                <div class="grid md:grid-cols-3 gap-6" id="planet-sections">
+                    <!-- Mercury -->
+                    <div class="bg-white p-6 rounded shadow text-center">
+                        <h4 class="text-xl font-bold mb-2 text-gray-800">Mercury</h4>
+                        <p id="mercury-age" class="text-gray-700">—</p>
+                    </div>
+                    <!-- Venus -->
+                    <div class="bg-white p-6 rounded shadow text-center">
+                        <h4 class="text-xl font-bold mb-2 text-gray-800">Venus</h4>
+                        <p id="venus-age" class="text-gray-700">—</p>
+                    </div>
+                    <!-- Earth -->
+                    <div class="bg-white p-6 rounded shadow text-center">
+                        <h4 class="text-xl font-bold mb-2 text-gray-800">Earth</h4>
+                        <p id="earth-age" class="text-gray-700">—</p>
+                    </div>
+                    <!-- Mars -->
+                    <div class="bg-white p-6 rounded shadow text-center">
+                        <h4 class="text-xl font-bold mb-2 text-gray-800">Mars</h4>
+                        <p id="mars-age" class="text-gray-700">—</p>
+                    </div>
+                    <!-- Jupiter -->
+                    <div class="bg-white p-6 rounded shadow text-center">
+                        <h4 class="text-xl font-bold mb-2 text-gray-800">Jupiter</h4>
+                        <p id="jupiter-age" class="text-gray-700">—</p>
+                    </div>
+                    <!-- Saturn -->
+                    <div class="bg-white p-6 rounded shadow text-center">
+                        <h4 class="text-xl font-bold mb-2 text-gray-800">Saturn</h4>
+                        <p id="saturn-age" class="text-gray-700">—</p>
+                    </div>
+                    <!-- Uranus -->
+                    <div class="bg-white p-6 rounded shadow text-center">
+                        <h4 class="text-xl font-bold mb-2 text-gray-800">Uranus</h4>
+                        <p id="uranus-age" class="text-gray-700">—</p>
+                    </div>
+                    <!-- Neptune -->
+                    <div class="bg-white p-6 rounded shadow text-center">
+                        <h4 class="text-xl font-bold mb-2 text-gray-800">Neptune</h4>
+                        <p id="neptune-age" class="text-gray-700">—</p>
+                    </div>
+                    <!-- Pluto -->
+                    <div class="bg-white p-6 rounded shadow text-center">
+                        <h4 class="text-xl font-bold mb-2 text-gray-800">Pluto</h4>
+                        <p id="pluto-age" class="text-gray-700">—</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solar System Stats -->
+        <section class="mt-16">
+            <div class="card">
+                <h3 class="text-3xl font-bold mb-6 text-center">Solar System Statistics</h3>
+                <div class="overview-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">4.6B</div>
+                        <div class="text-gray-400">Years Old</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">8</div>
+                        <div class="text-gray-400">Planets</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">200+</div>
+                        <div class="text-gray-400">Known Moons</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">1M+</div>
+                        <div class="text-gray-400">Asteroids</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+   <script>
+    // Video play functionality
+    function playVideo(planetName) {
+        // This would integrate with your actual video player
+        console.log(`Playing video for: ${planetName}`);
+        alert(`Video player would open here for ${planetName}`);
+        // You can replace this with actual video embedding code
+    }
+
+    // Planet Age Calculator
+    const planetOrbitalPeriods = {
+        mercury: 0.24,
+        venus: 0.62,
+        earth: 1,
+        mars: 1.88,
+        jupiter: 11.86,
+        saturn: 29.46,
+        uranus: 84.01,
+        neptune: 164.8,
+        pluto: 248.6
+    };
+
+    function calculatePlanetAges() {
+        const earthAge = parseFloat(document.getElementById("earthAge").value);
+        if (isNaN(earthAge) || earthAge <= 0) {
+            alert("Please enter a valid age.");
+            return;
+        }
+
+        // Update both the individual planet displays and the summary section
+        for (const planet in planetOrbitalPeriods) {
+            const age = (earthAge / planetOrbitalPeriods[planet]).toFixed(2);
+            
+            // Update individual planet showcase displays
+            const showcaseElement = document.getElementById(`${planet}-age-display`);
+            if (showcaseElement) {
+                showcaseElement.textContent = `${age} years old`;
+            }
+
+            // Update summary section displays
+            const summaryElement = document.getElementById(`${planet}-age`);
+            if (summaryElement) {
+                summaryElement.textContent = `${age} years old`;
+            }
+        }
+    }
+</script>

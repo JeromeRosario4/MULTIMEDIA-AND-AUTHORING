@@ -1,736 +1,865 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Animation Studio</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #111111 100%);
-      color: white;
-      font-family: 'Arial', sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* Navigation Header */
-    .navbar {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      backdrop-filter: blur(10px);
-      z-index: 1000;
-      padding: 1rem 0;
-      transition: all 0.3s ease;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .navbar.scrolled {
-      background: rgba(0, 0, 0, 0.98);
-      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
-    }
-
-    .nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 2rem;
-    }
-
-    .nav-logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-
-    .nav-logo:hover {
-      transform: scale(1.05);
-    }
-
-    .logo-text {
-      color: #4ecdc4;
-      margin-right: 0.5rem;
-    }
-
-    .logo-accent {
-      color: #ff6b6b;
-    }
-
-    .nav-menu {
-      display: flex;
-      list-style: none;
-      gap: 2rem;
-    }
-
-    .nav-item {
-      position: relative;
-    }
-
-    .nav-link {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-      padding: 0.5rem 1rem;
-      border-radius: 25px;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-    }
-
-    .nav-link::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.2), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .nav-link:hover::before {
-      left: 100%;
-    }
-
-    .nav-link:hover {
-      color: #4ecdc4;
-      transform: translateY(-2px);
-    }
-
-    .nav-link.active {
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-      color: white;
-    }
-
-    .nav-toggle {
-      display: none;
-      flex-direction: column;
-      cursor: pointer;
-    }
-
-    .bar {
-      width: 25px;
-      height: 3px;
-      background: white;
-      margin: 3px 0;
-      transition: 0.3s;
-      border-radius: 2px;
-    }
-
-    .nav-toggle.active .bar:nth-child(1) {
-      transform: rotate(-45deg) translate(-5px, 6px);
-    }
-
-    .nav-toggle.active .bar:nth-child(2) {
-      opacity: 0;
-    }
-
-    .nav-toggle.active .bar:nth-child(3) {
-      transform: rotate(45deg) translate(-5px, -6px);
-    }
-
-    /* Mobile Navigation */
-    @media (max-width: 768px) {
-      .nav-menu {
-        position: fixed;
-        top: 80px;
-        left: -100%;
-        width: 100%;
-        height: calc(100vh - 80px);
-        background: rgba(0, 0, 0, 0.98);
-        backdrop-filter: blur(10px);
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        padding-top: 2rem;
-        transition: left 0.3s ease;
-      }
-
-      .nav-menu.active {
-        left: 0;
-      }
-
-      .nav-item {
-        margin: 1rem 0;
-      }
-
-      .nav-link {
-        font-size: 1.2rem;
-        padding: 1rem 2rem;
-      }
-
-      .nav-toggle {
-        display: flex;
-      }
-    }
-
-    /* Animated Header */
-    .header {
-      position: relative;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      background: linear-gradient(45deg, #1a1a1a, #2a2a2a, #1a1a1a, #333333);
-      background-size: 400% 400%;
-      animation: gradientShift 8s ease infinite;
-      overflow: hidden;
-    }
-
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at 20% 80%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
-                  radial-gradient(circle at 80% 20%, rgba(255, 107, 107, 0.1) 0%, transparent 50%);
-      animation: pulse 6s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 1; }
-    }
-
-    .header-content {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-    }
-
-    .main-title {
-      font-size: clamp(3rem, 8vw, 8rem);
-      font-weight: bold;
-      margin-bottom: 1rem;
-      text-shadow: 3px 3px 0px rgba(0,0,0,0.5);
-      animation: titleGlow 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes titleGlow {
-      from { text-shadow: 3px 3px 0px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3); }
-      to { text-shadow: 3px 3px 0px rgba(0,0,0,0.5), 0 0 40px rgba(255,255,255,0.6); }
-    }
-
-    /* Main Content */
-    .main-content {
-      max-width: 1200px;
-      margin: auto;
-      padding: 4rem 2rem;
-    }
-
-    h1, h2 {
-      text-align: center;
-      color: #4ecdc4;
-      margin-bottom: 2rem;
-    }
-
-    h2 {
-      font-size: 2.5rem;
-      position: relative;
-      padding-bottom: 1rem;
-    }
-
-    h2::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 3px;
-      background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
-      border-radius: 2px;
-    }
-
-    .video-container {
-      text-align: center;
-      margin-bottom: 4rem;
-      position: relative;
-    }
-
-    .video-element {
-      width: 100%;
-      max-width: 800px;
-      height: 450px;
-      border-radius: 15px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .video-element:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
-    }
-
-    .weekly-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
-    }
-
-    .week-card {
-      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-      border-radius: 15px;
-      padding: 1.5rem;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(78, 205, 196, 0.2);
-    }
-
-    .week-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.1), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .week-card:hover::before {
-      left: 100%;
-    }
-
-    .week-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(78, 205, 196, 0.2);
-      border-color: rgba(78, 205, 196, 0.5);
-    }
-
-    .week-card h3 {
-      color: #ff6b6b;
-      margin-top: 0;
-      margin-bottom: 1rem;
-      font-size: 1.3rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    iframe {
-      width: 100%;
-      height: 200px;
-      border-radius: 10px;
-      border: none;
-      transition: all 0.3s ease;
-      position: relative;
-      z-index: 2;
-    }
-
-    iframe:hover {
-      transform: scale(1.02);
-    }
-
-    /* Solar System Styles */
-    .solar-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 80vh;
-      padding: 2rem;
-      background: radial-gradient(circle at center, #0a0a0a 0%, #000000 100%);
-      border-radius: 20px;
-      margin: 2rem 0;
-    }
-
-    .solar-system {
-      position: relative;
-      width: 600px;
-      height: 600px;
-    }
-
-    .sun {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 40px;
-      height: 40px;
-      background: radial-gradient(circle, #FFD700, #FFA500);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 30px #FFD700;
-      animation: sunGlow 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes sunGlow {
-      from { box-shadow: 0 0 30px #FFD700; }
-      to { box-shadow: 0 0 50px #FFD700, 0 0 60px #FFA500; }
-    }
-
-    .planet-orbit {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .planet {
-      position: absolute;
-      border-radius: 50%;
-      top: 0;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    /* Mercury */
-    .mercury-orbit {
-      width: 80px;
-      height: 80px;
-      animation: orbit 10s linear infinite;
-    }
-    .mercury {
-      width: 6px;
-      height: 6px;
-      background: #8C7853;
-    }
-
-    /* Venus */
-    .venus-orbit {
-      width: 100px;
-      height: 100px;
-      animation: orbit 15s linear infinite;
-    }
-    .venus {
-      width: 8px;
-      height: 8px;
-      background: #FFC649;
-    }
-
-    /* Earth */
-    .earth-orbit {
-      width: 120px;
-      height: 120px;
-      animation: orbit 20s linear infinite;
-    }
-    .earth {
-      width: 10px;
-      height: 10px;
-      background: radial-gradient(circle, #6B93D6, #1E3A8A);
-    }
-
-    /* Mars */
-    .mars-orbit {
-      width: 140px;
-      height: 140px;
-      animation: orbit 25s linear infinite;
-    }
-    .mars {
-      width: 8px;
-      height: 8px;
-      background: #CD5C5C;
-    }
-
-    /* Jupiter */
-    .jupiter-orbit {
-      width: 180px;
-      height: 180px;
-      animation: orbit 35s linear infinite;
-    }
-    .jupiter {
-      width: 20px;
-      height: 20px;
-      background: radial-gradient(circle, #D8CA9D, #FAD5A5);
-    }
-
-    /* Saturn */
-    .saturn-orbit {
-      width: 220px;
-      height: 220px;
-      animation: orbit 45s linear infinite;
-    }
-    .saturn {
-      width: 18px;
-      height: 18px;
-      background: #FAD5A5;
-      position: relative;
-    }
-    .saturn-rings {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 30px;
-      height: 30px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    /* Uranus */
-    .uranus-orbit {
-      width: 260px;
-      height: 260px;
-      animation: orbit 55s linear infinite;
-    }
-    .uranus {
-      width: 14px;
-      height: 14px;
-      background: #4FD0E3;
-    }
-
-    /* Neptune */
-    .neptune-orbit {
-      width: 300px;
-      height: 300px;
-      animation: orbit 65s linear infinite;
-    }
-    .neptune {
-      width: 12px;
-      height: 12px;
-      background: #5B5DDF;
-    }
-
-    @keyframes orbit {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .main-content {
-        padding: 2rem 1rem;
-      }
-      
-      .weekly-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-      
-      .week-card {
-        padding: 1rem;
-      }
-
-      .solar-system {
-        width: 300px;
-        height: 300px;
-      }
-
-      .mercury-orbit { width: 40px; height: 40px; }
-      .venus-orbit { width: 50px; height: 50px; }
-      .earth-orbit { width: 60px; height: 60px; }
-      .mars-orbit { width: 70px; height: 70px; }
-      .jupiter-orbit { width: 90px; height: 90px; }
-      .saturn-orbit { width: 110px; height: 110px; }
-      .uranus-orbit { width: 130px; height: 130px; }
-      .neptune-orbit { width: 150px; height: 150px; }
-    }
-
-    /* Smooth Scrolling */
-    html {
-      scroll-behavior: smooth;
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #1a1a2e;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(45deg, #ff5252, #26a69a);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotoscope Animation - Multimedia & Authoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a1a2e 0%, #16213e 25%, #1e3c72 50%, #2a5298 75%, #3b82f6 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 0;
+            background: rgba(10, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #60a5fa;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(45deg, #2563eb, #1e40af);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(147, 197, 253, 0.1) 0%, transparent 50%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 20px;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #3b82f6, #93c5fd, #1e40af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-content .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #cbd5e1;
+            font-weight: 300;
+        }
+
+        .hero-metrics {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 3rem;
+        }
+
+        .metric-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+        }
+
+        .metric-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        /* Featured Compilation Section */
+        .featured-section {
+            margin-bottom: 100px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+            color: #f8fafc;
+            text-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .compilation-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 30px;
+            padding: 60px;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        .compilation-video {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .compilation-video:hover {
+            transform: scale(1.02);
+            box-shadow: 0 30px 60px rgba(59, 130, 246, 0.3);
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .play-icon {
+            font-size: 4rem;
+            color: #f8fafc;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .video-placeholder:hover .play-icon {
+            transform: scale(1.1);
+            text-shadow: 0 0 20px rgba(248, 250, 252, 0.8);
+        }
+
+        .compilation-info h3 {
+            font-size: 2rem;
+            color: #f8fafc;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .compilation-info p {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            color: #94a3b8;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #60a5fa;
+            font-weight: bold;
+        }
+
+        /* Weekly Timeline */
+        .timeline-section {
+            margin-bottom: 100px;
+        }
+
+        .timeline-container {
+            position: relative;
+            padding: 50px 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #3b82f6, #1e40af);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 80px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 50px;
+        }
+
+        .timeline-card {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .timeline-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #3b82f6;
+            border-radius: 50%;
+            border: 4px solid #0a1a2e;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover .timeline-dot {
+            transform: translateX(-50%) scale(1.2);
+            background: #60a5fa;
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+        }
+
+        .week-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .week-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .week-date {
+            font-size: 1rem;
+            color: #94a3b8;
+        }
+
+        .week-video {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .week-video:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .week-video .play-icon {
+            font-size: 2.5rem;
+            color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .week-video:hover .play-icon {
+            transform: scale(1.1);
+            text-shadow: 0 0 20px rgba(248, 250, 252, 0.8);
+        }
+
+        .week-description {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .progress-container {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 10px;
+            transition: width 0.8s ease;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .fab.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #3b82f6, #1e40af);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #2563eb, #1d4ed8);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-metrics {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .compilation-showcase {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 40px 20px;
+            }
+            
+            .timeline-line {
+                left: 20px;
+            }
+            
+            .timeline-item {
+                flex-direction: row !important;
+                margin-left: 40px;
+            }
+            
+            .timeline-item:nth-child(odd) {
+                flex-direction: row !important;
+            }
+            
+            .timeline-dot {
+                left: 20px;
+            }
+            
+            .timeline-content {
+                margin: 0 0 0 30px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- Navigation Header -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <div class="nav-logo">
-        <span class="logo-text">ANIMATION</span>
-        <span class="logo-accent">STUDIO</span>
-      </div>
-      <ul class="nav-menu">
-        <li class="nav-item">
-          <a href="home.html" class="nav-link active">Home</a>
-        </li>
-        <li class="nav-item">
-          <a href="rotoscope.html" class="nav-link">Rotoscope</a>
-        </li>
-        <li class="nav-item">
-          <a href="solarsystem.html" class="nav-link">Solar System</a>
-        </li>
-      </ul>
-      <div class="nav-toggle">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Animated Header -->
-  <header class="header" id="home">
-    <div class="header-content">
-      <h1 class="main-title">ANIMATION STUDIO</h1>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <div class="main-content" id="rotoscope">
-    <h2>🎬 Full Compilation</h2>
-    <div class="video-container">
-      <iframe class="video-element" src="https://www.youtube.com/embed/yourCompilationVideoID" allowfullscreen></iframe>
-    </div>
-
-    <h2>📅 Weekly Submissions</h2>
-    <div class="weekly-grid">
-      <div class="week-card">
-        <h3>Week 1 - Introduction</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek1VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 2 - Basic Tracing</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek2VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 3 - Motion Study</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek3VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 4 - Character Work</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek4VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 5 - Advanced Techniques</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek5VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 6 - Color & Style</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek6VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 7 - Special Effects</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek7VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 8 - Midterm Project</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek8VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 9 - Complex Scenes</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek9VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 10 - Professional Polish</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek10VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 11 - Creative Expression</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek11VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 12 - Industry Standards</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek12VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 13 - Final Project Prep</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek13VideoID" allowfullscreen></iframe>
-      </div>
-      <div class="week-card">
-        <h3>Week 14 - Final Showcase</h3>
-        <iframe src="https://www.youtube.com/embed/yourWeek14VideoID" allowfullscreen></iframe>
-      </div>
-    </div>
-  </div>
-
-  <!-- Solar System Section -->
-  <div class="main-content" id="solar-system">
-    <h2>🌟 Solar System Animation</h2>
-    <div class="solar-container">
-      <div class="solar-system">
-        <div class="sun"></div>
-        <div class="planet-orbit mercury-orbit">
-          <div class="planet mercury"></div>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <div class="logo">Rotoscope Studio</div>
+            <a href="home.html" class="back-btn">← Back to Home</a>
         </div>
-        <div class="planet-orbit venus-orbit">
-          <div class="planet venus"></div>
-        </div>
-        <div class="planet-orbit earth-orbit">
-          <div class="planet earth"></div>
-        </div>
-        <div class="planet-orbit mars-orbit">
-          <div class="planet mars"></div>
-        </div>
-        <div class="planet-orbit jupiter-orbit">
-          <div class="planet jupiter"></div>
-        </div>
-        <div class="planet-orbit saturn-orbit">
-          <div class="planet saturn">
-            <div class="saturn-rings"></div>
-          </div>
-        </div>
-        <div class="planet-orbit uranus-orbit">
-          <div class="planet uranus"></div>
-        </div>
-        <div class="planet-orbit neptune-orbit">
-          <div class="planet neptune"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+    </nav>
 
-  <script>
-    // Mobile Navigation Toggle
-    const navToggle = document.querySelector('.nav-toggle');
-    const navMenu = document.querySelector('.nav-menu');
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Animation Mastery</h1>
+            <p class="subtitle">14 Weeks of Professional Rotoscope Animation Development</p>
+            <div class="hero-metrics">
+                <div class="metric-card">
+                    <div class="metric-number">14</div>
+                    <div class="metric-label">Weeks</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">280</div>
+                    <div class="metric-label">Hours</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">∞</div>
+                    <div class="metric-label">Skills</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    navToggle.addEventListener('click', () => {
-      navToggle.classList.toggle('active');
-      navMenu.classList.toggle('active');
-    });
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Featured Compilation -->
+        <section class="featured-section">
+            <h2 class="section-title">🎬 Master Compilation</h2>
+            <div class="compilation-showcase">
+                <div class="compilation-video">
+                    <div class="video-placeholder">
+                        <div class="play-icon">▶</div>
+                        <h3>Complete Journey</h3>
+                    </div>
+                </div>
+                <div class="compilation-info">
+                    <h3>14-Week Animation Journey</h3>
+                    <p>Experience the complete transformation from basic rotoscope techniques to professional-grade animation mastery in this comprehensive showcase.</p>
+                    <ul class="feature-list">
+                        <li>Professional frame-by-frame animation techniques</li>
+                        <li>Advanced motion capture and analysis</li>
+                        <li>Character development and expression</li>
+                        <li>Industry-standard workflow optimization</li>
+                        <li>Creative artistic expression and style</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
-    // Close mobile menu when clicking a link
-    document.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        navToggle.classList.remove('active');
-        navMenu.classList.remove('active');
-      });
-    });
+        <!-- Weekly Timeline -->
+        <section class="timeline-section">
+            <h2 class="section-title">📅 Learning Timeline</h2>
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 1</div>
+                                <div class="week-date">Foundation</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Introduction to rotoscope animation fundamentals, basic tools, and first frame-by-frame attempts.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 7.14%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    // Navbar scroll effect
-    window.addEventListener('scroll', () => {
-      const navbar = document.querySelector('.navbar');
-      if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-      } else {
-        navbar.classList.remove('scrolled');
-      }
-    });
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 2</div>
+                                <div class="week-date">Precision</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Advanced tracing techniques, motion flow analysis, and timing consistency development.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 14.28%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    // Logo click to scroll to top
-    document.querySelector('.nav-logo').addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  </script>
-</body>
-</html>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 3</div>
+                                <div class="week-date">Motion Studies</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Complex movement analysis, natural motion patterns, and dynamic pose work.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 21.42%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 4</div>
+                                <div class="week-date">Character Focus</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Character-focused animation with emphasis on personality through movement and expression.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 28.56%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 5</div>
+                                <div class="week-date">Advanced Methods</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Multi-layer compositing, advanced techniques, and complex scene management.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 35.7%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 6</div>
+                                <div class="week-date">Visual Style</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Color theory integration and personal artistic style development within animation.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 42.84%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 7</div>
+                                <div class="week-date">Effects & Enhancement</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Special effects integration, lighting, shadows, and atmospheric elements.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 49.98%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 8</div>
+                                <div class="week-date">Midterm Showcase</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Comprehensive project demonstrating all learned techniques in a major animation sequence.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 57.12%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 9</div>
+                                <div class="week-date">Complex Scenes</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Multi-character scene management and simultaneous layer animation workflows.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 64.26%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 10</div>
+                                <div class="week-date">Professional Polish</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Commercial-grade finishing techniques, cleanup, and quality control standards.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 71.4%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 11</div>
+                                <div class="week-date">Creative Expression</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Experimental techniques and unique artistic voice development through advanced methods.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 78.54%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 12</div>
+                                <div class="week-date">Industry Standards</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Professional workflow optimization and efficient production pipeline development.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 85.68%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 13</div>
+                                <div class="week-date">Final Preparation</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Final project planning and preparation incorporating all learned skills and techniques.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 92.82%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <div class="week-header">
+                                <div class="week-number">Week 14</div>
+                                <div class="week-date">Final Showcase</div>
+                            </div>
+                            <div class="week-video">
+                                <div class="play-icon">▶</div>
+                            </div>
+                            <p class="week-description">Culminating project presentation demonstrating complete mastery and artistic development.</p>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Action Button -->
+    <button class="fab" id="scrollTop">↑</button>
+
+        <script>
+        // Scroll to top functionality
+        const scrollTopBtn = document.getElementById('scrollTop');
+        
+        window.addEventListener('scroll', () => {
+            scrollTopBtn.classList.toggle('visible', window.pageYOffset > 300);
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Navigation background change on scroll
+        const navbar = document.querySelector('.nav-bar');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 50) {
+                navbar.style.background = 'rgba(10, 26, 46, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(10, 26, 46, 0.95)';
+            }
+        });
+    </script>
