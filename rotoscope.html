@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a1a2e 0%, #16213e 25%, #1e3c72 50%, #2a5298 75%, #3b82f6 100%);
+            background-color: #0a1a2e;
             color: #e2e8f0;
             line-height: 1.6;
         }
@@ -74,6 +75,7 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            padding-top: 80px;
         }
 
         .hero::before {
@@ -189,12 +191,21 @@
             backdrop-filter: blur(20px);
         }
 
+        .compilation-video-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
         .compilation-video {
             position: relative;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 25px 50px rgba(59, 130, 246, 0.2);
             transition: all 0.3s ease;
+            aspect-ratio: 16/9;
+            width: 100%;
         }
 
         .compilation-video:hover {
@@ -204,7 +215,7 @@
 
         .video-placeholder {
             width: 100%;
-            height: 350px;
+            height: 100%;
             background: linear-gradient(135deg, #1e3a8a, #3b82f6);
             display: flex;
             align-items: center;
@@ -242,6 +253,69 @@
         .video-placeholder:hover .play-icon {
             transform: scale(1.1);
             text-shadow: 0 0 20px rgba(248, 250, 252, 0.8);
+        }
+
+        #mainVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        /* Credits Section */
+        .credits-section {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .credits-section:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(59, 130, 246, 0.12);
+        }
+
+        .credits-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .credits-content {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .youtube-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(45deg, #ff0000, #cc0000);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
+        }
+
+        .youtube-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.3);
+            background: linear-gradient(45deg, #e60000, #b30000);
+        }
+
+        .youtube-icon {
+            font-size: 1.2rem;
         }
 
         .compilation-info h3 {
@@ -382,19 +456,39 @@
             overflow: hidden;
         }
 
-        .week-video:hover {
-            transform: scale(1.02);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        .week-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
         }
 
         .week-video .play-icon {
             font-size: 2.5rem;
             color: #f8fafc;
             transition: all 0.3s ease;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        .week-video.playing .play-icon {
+            display: none;
+        }
+
+        .week-video.playing video {
+            display: block;
+        }
+
+        .week-video:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
         }
 
         .week-video:hover .play-icon {
-            transform: scale(1.1);
+            transform: translate(-50%, -50%) scale(1.1);
             text-shadow: 0 0 20px rgba(248, 250, 252, 0.8);
         }
 
@@ -518,20 +612,20 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Animation Mastery</h1>
-            <p class="subtitle">14 Weeks of Professional Rotoscope Animation Development</p>
+            <h1>ROTOSCOPE</h1>
+            <p class="subtitle">Multimedia and Authoring</p>
             <div class="hero-metrics">
                 <div class="metric-card">
                     <div class="metric-number">14</div>
                     <div class="metric-label">Weeks</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-number">280</div>
-                    <div class="metric-label">Hours</div>
+                    <div class="metric-number">3rd</div>
+                    <div class="metric-label">Term</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-number">∞</div>
-                    <div class="metric-label">Skills</div>
+                    <div class="metric-number">Adobe</div>
+                    <div class="metric-label">After Effects</div>
                 </div>
             </div>
         </div>
@@ -543,20 +637,44 @@
         <section class="featured-section">
             <h2 class="section-title">🎬 Master Compilation</h2>
             <div class="compilation-showcase">
-                <div class="compilation-video">
-                    <div class="video-placeholder">
-                        <div class="play-icon">▶</div>
-                        <h3>Complete Journey</h3>
+                <div class="compilation-video-container">
+                    <div class="compilation-video">
+                        <div class="video-placeholder" id="mainVideoPlaceholder">
+                            <div class="play-icon">▶</div>
+                            <h3>Complete Journey</h3>
+                        </div>
+                        <video id="mainVideo" class="video-player" controls>
+                            <source src="rotoscope/complete.mp4" type="video/mp4">
+                            <source src="rotoscope/complete.webm" type="video/webm">
+                            Your browser does not support HTML5 video.
+                        </video>
+                    </div>
+                    
+                    <!-- Credits Section -->
+                    <div class="credits-section">
+                        <div class="credits-title">
+                            <span>🎯</span>
+                            Credits to the rightful owners
+                        </div>
+                        <div class="credits-content">
+                            <p><strong>Channel:</strong> Amy Park 에미팍</p>
+                            <p><strong>Duration:</strong> 1:05 </p>
+                        </div>
+                        <a href="https://youtu.be/Tyoe7KcDocA?feature=shared" class="youtube-link" target="_blank">
+                            <span class="youtube-icon">📺</span>
+                            Watch on YouTube
+                        </a>
                     </div>
                 </div>
+
                 <div class="compilation-info">
-                    <h3>14-Week Animation Journey</h3>
-                    <p>Experience the complete transformation from basic rotoscope techniques to professional-grade animation mastery in this comprehensive showcase.</p>
+                    <h3>Adobe After Effects</h3>
+                    <p>Adobe After Effects is a digital visual effects, motion graphics, and compositing software used for creating animations, video effects, and cinematic visual content.</p>
                     <ul class="feature-list">
                         <li>Professional frame-by-frame animation techniques</li>
-                        <li>Advanced motion capture and analysis</li>
-                        <li>Character development and expression</li>
-                        <li>Industry-standard workflow optimization</li>
+                        <li>Roto Brush Tool</li>
+                        <li>Edge Refinement Controls</li>
+                        <li>Alpha Channel & Matte View Modes</li>
                         <li>Creative artistic expression and style</li>
                     </ul>
                 </div>
@@ -565,22 +683,27 @@
 
         <!-- Weekly Timeline -->
         <section class="timeline-section">
-            <h2 class="section-title">📅 Learning Timeline</h2>
+            <h2 class="section-title">📅 Timeline</h2>
             <div class="timeline-container">
                 <div class="timeline-line"></div>
                 
+                <!-- Week 1 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 1</div>
-                                <div class="week-date">Foundation</div>
+                                <div class="week-number">1 to 5 seconds</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video1">
+                                <video>
+                                    <source src="rotoscope/roto1.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto1.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Introduction to rotoscope animation fundamentals, basic tools, and first frame-by-frame attempts.</p>
+                            <p class="week-description">Open After Effects and import the video clip you want to rotoscope.</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 7.14%"></div>
                             </div>
@@ -588,18 +711,23 @@
                     </div>
                 </div>
 
+                <!-- Week 2 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 2</div>
-                                <div class="week-date">Precision</div>
+                                <div class="week-number">6 to 10 seconds</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video2">
+                                <video>
+                                    <source src="rotoscope/roto2.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto2.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Advanced tracing techniques, motion flow analysis, and timing consistency development.</p>
+                            <p class="week-description">Drag your footage into the timeline to create a composition.</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 14.28%"></div>
                             </div>
@@ -607,18 +735,23 @@
                     </div>
                 </div>
 
+                <!-- Week 3 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 3</div>
-                                <div class="week-date">Motion Studies</div>
+                                <div class="week-number">11 to 15 seconds</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video3">
+                                <video>
+                                    <source src="rotoscope/roto3.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto3.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Complex movement analysis, natural motion patterns, and dynamic pose work.</p>
+                            <p class="week-description">Press Ctrl + D (Windows) or Cmd + D (Mac) to duplicate the layer — this helps preserve the original.</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 21.42%"></div>
                             </div>
@@ -626,18 +759,23 @@
                     </div>
                 </div>
 
+                <!-- Week 4 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 4</div>
-                                <div class="week-date">Character Focus</div>
+                                <div class="week-number">16 to 20 seconds</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video4">
+                                <video>
+                                    <source src="rotoscope/roto4.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto4.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Character-focused animation with emphasis on personality through movement and expression.</p>
+                            <p class="week-description">Click on the duplicated layer where you'll apply the rotoscoping effect.</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 28.56%"></div>
                             </div>
@@ -645,18 +783,23 @@
                     </div>
                 </div>
 
+                <!-- Week 5 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 5</div>
-                                <div class="week-date">Advanced Methods</div>
+                                <div class="week-number">21 to 25 seconds</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video5">
+                                <video>
+                                    <source src="rotoscope/roto5.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto5.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Multi-layer compositing, advanced techniques, and complex scene management.</p>
+                            <p class="week-description">Double-click the duplicated layer in the timeline to open it in the Layer panel (not the Composition panel).</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 35.7%"></div>
                             </div>
@@ -664,18 +807,23 @@
                     </div>
                 </div>
 
+                <!-- Week 6 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 6</div>
-                                <div class="week-date">Visual Style</div>
+                                <div class="week-number">26 to 30 seconds</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video6">
+                                <video>
+                                    <source src="rotoscope/roto6.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto6.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Color theory integration and personal artistic style development within animation.</p>
+                            <p class="week-description">Click the Roto Brush Tool from the toolbar (or press Alt/Option + W).</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 42.84%"></div>
                             </div>
@@ -683,18 +831,23 @@
                     </div>
                 </div>
 
+                <!-- Week 7 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 7</div>
-                                <div class="week-date">Effects & Enhancement</div>
+                                <div class="week-number">31 to 35 seconds</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video7">
+                                <video>
+                                    <source src="rotoscope/roto7.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto7.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Special effects integration, lighting, shadows, and atmospheric elements.</p>
+                            <p class="week-description">Use the green brush to highlight the object you want to isolate — After Effects will detect the edges.</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 49.98%"></div>
                             </div>
@@ -702,18 +855,23 @@
                     </div>
                 </div>
 
+                <!-- Week 8 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 8</div>
-                                <div class="week-date">Midterm Showcase</div>
+                                <div class="week-number">36 to 40 seconds</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video8">
+                                <video>
+                                    <source src="rotoscope/roto8.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto8.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Comprehensive project demonstrating all learned techniques in a major animation sequence.</p>
+                            <p class="week-description">Hold Alt (Windows) or Option (Mac) and draw with the red brush to subtract unwanted areas.</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 57.12%"></div>
                             </div>
@@ -721,18 +879,23 @@
                     </div>
                 </div>
 
+                <!-- Week 9 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 9</div>
-                                <div class="week-date">Complex Scenes</div>
+                                <div class="week-number">41 to 45 seconds</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video9">
+                                <video>
+                                    <source src="rotoscope/roto9.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto9.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Multi-character scene management and simultaneous layer animation workflows.</p>
+                            <p class="week-description">Once you're happy with the selection across all frames, click the Freeze button in the Layer panel to lock in the rotoscoping.</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 64.26%"></div>
                             </div>
@@ -740,18 +903,23 @@
                     </div>
                 </div>
 
+                <!-- Week 10 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 10</div>
-                                <div class="week-date">Professional Polish</div>
+                                <div class="week-number">46 to 50 seconds</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video10">
+                                <video>
+                                    <source src="rotoscope/roto10.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto10.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Commercial-grade finishing techniques, cleanup, and quality control standards.</p>
+                            <p class="week-description">Click back to the Composition panel to view your isolated subject.</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 71.4%"></div>
                             </div>
@@ -759,18 +927,23 @@
                     </div>
                 </div>
 
+                <!-- Week 11 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 11</div>
-                                <div class="week-date">Creative Expression</div>
+                                <div class="week-number">51 to 55 seconds</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video11">
+                                <video>
+                                    <source src="rotoscope/roto11.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto11.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Experimental techniques and unique artistic voice development through advanced methods.</p>
+                            <p class="week-description">Place a new background or visual effects behind your rotoscoped subject for compositing.</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 78.54%"></div>
                             </div>
@@ -778,58 +951,25 @@
                     </div>
                 </div>
 
+                <!-- Week 12 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-card">
                             <div class="week-header">
-                                <div class="week-number">Week 12</div>
-                                <div class="week-date">Industry Standards</div>
+                                <div class="week-number">55 seconds to 1 minute</div>
                             </div>
-                            <div class="week-video">
+                            <div class="week-video" id="video12">
+                                <video>
+                                    <source src="rotoscope/roto12.mp4" type="video/mp4">
+                                    <source src="rotoscope/roto12.webm" type="video/webm">
+                                    Your browser does not support HTML5 video.
+                                </video>
                                 <div class="play-icon">▶</div>
                             </div>
-                            <p class="week-description">Professional workflow optimization and efficient production pipeline development.</p>
+                            <p class="week-description">Go to Composition > Add to Render Queue or use Media Encoder to export your final video.</p>
                             <div class="progress-container">
                                 <div class="progress-bar" style="width: 85.68%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-card">
-                            <div class="week-header">
-                                <div class="week-number">Week 13</div>
-                                <div class="week-date">Final Preparation</div>
-                            </div>
-                            <div class="week-video">
-                                <div class="play-icon">▶</div>
-                            </div>
-                            <p class="week-description">Final project planning and preparation incorporating all learned skills and techniques.</p>
-                            <div class="progress-container">
-                                <div class="progress-bar" style="width: 92.82%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-card">
-                            <div class="week-header">
-                                <div class="week-number">Week 14</div>
-                                <div class="week-date">Final Showcase</div>
-                            </div>
-                            <div class="week-video">
-                                <div class="play-icon">▶</div>
-                            </div>
-                            <p class="week-description">Culminating project presentation demonstrating complete mastery and artistic development.</p>
-                            <div class="progress-container">
-                                <div class="progress-bar" style="width: 100%"></div>
                             </div>
                         </div>
                     </div>
@@ -841,7 +981,39 @@
     <!-- Floating Action Button -->
     <button class="fab" id="scrollTop">↑</button>
 
-        <script>
+    <script>
+        // Video play functionality
+        document.querySelectorAll('.week-video').forEach(videoContainer => {
+            const video = videoContainer.querySelector('video');
+            const playIcon = videoContainer.querySelector('.play-icon');
+            
+            videoContainer.addEventListener('click', () => {
+                if (videoContainer.classList.contains('playing')) {
+                    video.pause();
+                    videoContainer.classList.remove('playing');
+                } else {
+                    // Pause all other videos
+                    document.querySelectorAll('.week-video.playing').forEach(playingVideo => {
+                        playingVideo.classList.remove('playing');
+                        playingVideo.querySelector('video').pause();
+                    });
+                    
+                    video.play();
+                    videoContainer.classList.add('playing');
+                }
+            });
+        });
+
+        // Main video play functionality
+        const mainVideoPlaceholder = document.getElementById('mainVideoPlaceholder');
+        const mainVideo = document.getElementById('mainVideo');
+        
+        mainVideoPlaceholder.addEventListener('click', () => {
+            mainVideoPlaceholder.style.display = 'none';
+            mainVideo.style.display = 'block';
+            mainVideo.play();
+        });
+
         // Scroll to top functionality
         const scrollTopBtn = document.getElementById('scrollTop');
         
@@ -863,3 +1035,5 @@
             }
         });
     </script>
+</body>
+</html>
