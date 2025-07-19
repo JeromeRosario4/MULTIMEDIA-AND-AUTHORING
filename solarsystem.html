@@ -181,6 +181,56 @@
             font-weight: bold;
             color: #60a5fa;
         }
+
+        /* Video player styles */
+        .video-player {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: black;
+            display: none;
+        }
+        
+        .video-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .close-video {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            display: none;
+        }
+        
+        .video-error {
+            color: #ff4444;
+            padding: 1rem;
+            text-align: center;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
     </style>
 </head>
 <body class="min-h-screen text-white">
@@ -198,13 +248,25 @@
         <section class="mb-16">
             <div class="flex flex-col lg:flex-row gap-12 items-center">
                 <div class="lg:w-1/2">
-                    <div class="video-container aspect-video">
-                        <div class="play-button" onclick="playVideo('complete-journey')">
-                            <div class="play-icon"></div>
+                    <div class="video-wrapper">
+                        <div class="video-placeholder" id="completeJourneyPlaceholder" onclick="playVideo(this, 'completeJourney')">
+                            <div class="play-button">
+                                <div class="play-icon"></div>
+                            </div>
+                            <div class="absolute bottom-6 left-6 right-6">
+                                <h3 class="text-2xl font-bold text-white mb-2">Complete Journey</h3>
+                            </div>
                         </div>
-                        <div class="absolute bottom-6 left-6 right-6">
-                            <h3 class="text-2xl font-bold text-white mb-2">Complete Journey</h3>
-                        </div>
+                        <video id="completeJourneyVideo" class="video-player" controls>
+                            <source src="solarsystem/solarsystem.mp4" type="video/mp4">
+                            <source src="solarsystem/solarsystem.webm" type="video/webm">
+                            Your browser does not support HTML5 video. 
+                            <a href="solarsystem/solarsystem.mp4">Download the video</a> instead.
+                        </video>
+                        <button class="close-video" onclick="stopVideo('completeJourneyVideo', 'completeJourneyPlaceholder')">&times;</button>
+                    </div>
+                    <div id="completeJourneyError" class="video-error">
+                        Video failed to load. Please check the file path and format.
                     </div>
                 </div>
                 <div class="lg:w-1/2">
@@ -212,28 +274,6 @@
                     <p class="text-xl text-gray-300 mb-8">
                         Experience the complete journey through our solar system from the blazing Sun to the distant reaches of Pluto in this comprehensive visual showcase.
                     </p>
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                            <span class="text-gray-300">High-definition planetary cinematography</span>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                            <span class="text-gray-300">Real astronomical data and measurements</span>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                            <span class="text-gray-300">Interactive planetary comparison</span>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                            <span class="text-gray-300">Scientific accuracy and educational value</span>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                            <span class="text-gray-300">Immersive space exploration experience</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -289,10 +329,21 @@
                             </div>
                         </div>
                         <div class="lg:w-1/2">
-                            <div class="video-container aspect-video">
-                                <div class="play-button" onclick="playVideo('mercury')">
-                                    <div class="play-icon"></div>
+                            <div class="video-wrapper">
+                                <div class="video-placeholder" id="mercuryPlaceholder" onclick="playVideo(this, 'mercury')">
+                                    <div class="play-button">
+                                        <div class="play-icon"></div>
+                                    </div>
                                 </div>
+                                <video id="mercuryVideo" class="video-player" controls>
+                                    <source src="solarsystem/mercury.mp4" type="video/mp4">
+                                    <source src="solarsystem/mercury.webm" type="video/webm">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button class="close-video" onclick="stopVideo('mercuryVideo', 'mercuryPlaceholder')">&times;</button>
+                            </div>
+                            <div id="mercuryError" class="video-error">
+                                Video failed to load. Please check the file path and format.
                             </div>
                         </div>
                     </div>
@@ -318,10 +369,21 @@
                             </div>
                         </div>
                         <div class="lg:w-1/2">
-                            <div class="video-container aspect-video">
-                                <div class="play-button" onclick="playVideo('venus')">
-                                    <div class="play-icon"></div>
+                            <div class="video-wrapper">
+                                <div class="video-placeholder" id="venusPlaceholder" onclick="playVideo(this, 'venus')">
+                                    <div class="play-button">
+                                        <div class="play-icon"></div>
+                                    </div>
                                 </div>
+                                <video id="venusVideo" class="video-player" controls>
+                                    <source src="solarsystem/venus.mp4" type="video/mp4">
+                                    <source src="solarsystem/venus.webm" type="video/webm">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button class="close-video" onclick="stopVideo('venusVideo', 'venusPlaceholder')">&times;</button>
+                            </div>
+                            <div id="venusError" class="video-error">
+                                Video failed to load. Please check the file path and format.
                             </div>
                         </div>
                     </div>
@@ -347,10 +409,21 @@
                             </div>
                         </div>
                         <div class="lg:w-1/2">
-                            <div class="video-container aspect-video">
-                                <div class="play-button" onclick="playVideo('earth')">
-                                    <div class="play-icon"></div>
+                            <div class="video-wrapper">
+                                <div class="video-placeholder" id="earthPlaceholder" onclick="playVideo(this, 'earth')">
+                                    <div class="play-button">
+                                        <div class="play-icon"></div>
+                                    </div>
                                 </div>
+                                <video id="earthVideo" class="video-player" controls>
+                                    <source src="solarsystem/earth.mp4" type="video/mp4">
+                                    <source src="solarsystem/earth.webm" type="video/webm">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button class="close-video" onclick="stopVideo('earthVideo', 'earthPlaceholder')">&times;</button>
+                            </div>
+                            <div id="earthError" class="video-error">
+                                Video failed to load. Please check the file path and format.
                             </div>
                         </div>
                     </div>
@@ -376,10 +449,21 @@
                             </div>
                         </div>
                         <div class="lg:w-1/2">
-                            <div class="video-container aspect-video">
-                                <div class="play-button" onclick="playVideo('mars')">
-                                    <div class="play-icon"></div>
+                            <div class="video-wrapper">
+                                <div class="video-placeholder" id="marsPlaceholder" onclick="playVideo(this, 'mars')">
+                                    <div class="play-button">
+                                        <div class="play-icon"></div>
+                                    </div>
                                 </div>
+                                <video id="marsVideo" class="video-player" controls>
+                                    <source src="solarsystem/mars.mp4" type="video/mp4">
+                                    <source src="solarsystem/mars.webm" type="video/webm">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button class="close-video" onclick="stopVideo('marsVideo', 'marsPlaceholder')">&times;</button>
+                            </div>
+                            <div id="marsError" class="video-error">
+                                Video failed to load. Please check the file path and format.
                             </div>
                         </div>
                     </div>
@@ -405,10 +489,21 @@
                             </div>
                         </div>
                         <div class="lg:w-1/2">
-                            <div class="video-container aspect-video">
-                                <div class="play-button" onclick="playVideo('jupiter')">
-                                    <div class="play-icon"></div>
+                            <div class="video-wrapper">
+                                <div class="video-placeholder" id="jupiterPlaceholder" onclick="playVideo(this, 'jupiter')">
+                                    <div class="play-button">
+                                        <div class="play-icon"></div>
+                                    </div>
                                 </div>
+                                <video id="jupiterVideo" class="video-player" controls>
+                                    <source src="solarsystem/jupiter.mp4" type="video/mp4">
+                                    <source src="solarsystem/jupiter.webm" type="video/webm">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button class="close-video" onclick="stopVideo('jupiterVideo', 'jupiterPlaceholder')">&times;</button>
+                            </div>
+                            <div id="jupiterError" class="video-error">
+                                Video failed to load. Please check the file path and format.
                             </div>
                         </div>
                     </div>
@@ -434,10 +529,21 @@
                             </div>
                         </div>
                         <div class="lg:w-1/2">
-                            <div class="video-container aspect-video">
-                                <div class="play-button" onclick="playVideo('saturn')">
-                                    <div class="play-icon"></div>
+                            <div class="video-wrapper">
+                                <div class="video-placeholder" id="saturnPlaceholder" onclick="playVideo(this, 'saturn')">
+                                    <div class="play-button">
+                                        <div class="play-icon"></div>
+                                    </div>
                                 </div>
+                                <video id="saturnVideo" class="video-player" controls>
+                                    <source src="solarsystem/saturn.mp4" type="video/mp4">
+                                    <source src="solarsystem/saturn.webm" type="video/webm">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button class="close-video" onclick="stopVideo('saturnVideo', 'saturnPlaceholder')">&times;</button>
+                            </div>
+                            <div id="saturnError" class="video-error">
+                                Video failed to load. Please check the file path and format.
                             </div>
                         </div>
                     </div>
@@ -463,10 +569,21 @@
                             </div>
                         </div>
                         <div class="lg:w-1/2">
-                            <div class="video-container aspect-video">
-                                <div class="play-button" onclick="playVideo('uranus')">
-                                    <div class="play-icon"></div>
+                            <div class="video-wrapper">
+                                <div class="video-placeholder" id="uranusPlaceholder" onclick="playVideo(this, 'uranus')">
+                                    <div class="play-button">
+                                        <div class="play-icon"></div>
+                                    </div>
                                 </div>
+                                <video id="uranusVideo" class="video-player" controls>
+                                    <source src="solarsystem/uranus.mp4" type="video/mp4">
+                                    <source src="solarsystem/uranus.webm" type="video/webm">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button class="close-video" onclick="stopVideo('uranusVideo', 'uranusPlaceholder')">&times;</button>
+                            </div>
+                            <div id="uranusError" class="video-error">
+                                Video failed to load. Please check the file path and format.
                             </div>
                         </div>
                     </div>
@@ -492,10 +609,21 @@
                             </div>
                         </div>
                         <div class="lg:w-1/2">
-                            <div class="video-container aspect-video">
-                                <div class="play-button" onclick="playVideo('neptune')">
-                                    <div class="play-icon"></div>
+                            <div class="video-wrapper">
+                                <div class="video-placeholder" id="neptunePlaceholder" onclick="playVideo(this, 'neptune')">
+                                    <div class="play-button">
+                                        <div class="play-icon"></div>
+                                    </div>
                                 </div>
+                                <video id="neptuneVideo" class="video-player" controls>
+                                    <source src="solarsystem/neptune.mp4" type="video/mp4">
+                                    <source src="solarsystem/neptune.webm" type="video/webm">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button class="close-video" onclick="stopVideo('neptuneVideo', 'neptunePlaceholder')">&times;</button>
+                            </div>
+                            <div id="neptuneError" class="video-error">
+                                Video failed to load. Please check the file path and format.
                             </div>
                         </div>
                     </div>
@@ -521,10 +649,21 @@
                             </div>
                         </div>
                         <div class="lg:w-1/2">
-                            <div class="video-container aspect-video">
-                                <div class="play-button" onclick="playVideo('pluto')">
-                                    <div class="play-icon"></div>
+                            <div class="video-wrapper">
+                                <div class="video-placeholder" id="plutoPlaceholder" onclick="playVideo(this, 'pluto')">
+                                    <div class="play-button">
+                                        <div class="play-icon"></div>
+                                    </div>
                                 </div>
+                                <video id="plutoVideo" class="video-player" controls>
+                                    <source src="solarsystem/pluto.mp4" type="video/mp4">
+                                    <source src="solarsystem/pluto.webm" type="video/webm">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button class="close-video" onclick="stopVideo('plutoVideo', 'plutoPlaceholder')">&times;</button>
+                            </div>
+                            <div id="plutoError" class="video-error">
+                                Video failed to load. Please check the file path and format.
                             </div>
                         </div>
                     </div>
@@ -614,50 +753,109 @@
         </section>
     </div>
 
-   <script>
-    // Video play functionality
-    function playVideo(planetName) {
-        // This would integrate with your actual video player
-        console.log(`Playing video for: ${planetName}`);
-        alert(`Video player would open here for ${planetName}`);
-        // You can replace this with actual video embedding code
-    }
-
-    // Planet Age Calculator
-    const planetOrbitalPeriods = {
-        mercury: 0.24,
-        venus: 0.62,
-        earth: 1,
-        mars: 1.88,
-        jupiter: 11.86,
-        saturn: 29.46,
-        uranus: 84.01,
-        neptune: 164.8,
-        pluto: 248.6
-    };
-
-    function calculatePlanetAges() {
-        const earthAge = parseFloat(document.getElementById("earthAge").value);
-        if (isNaN(earthAge) || earthAge <= 0) {
-            alert("Please enter a valid age.");
-            return;
-        }
-
-        // Update both the individual planet displays and the summary section
-        for (const planet in planetOrbitalPeriods) {
-            const age = (earthAge / planetOrbitalPeriods[planet]).toFixed(2);
+    <script>
+        // Video play functionality with error handling
+        function playVideo(placeholderElement, planetName) {
+            const videoId = planetName + 'Video';
+            const videoElement = document.getElementById(videoId);
+            const errorElement = document.getElementById(planetName + 'Error');
             
-            // Update individual planet showcase displays
-            const showcaseElement = document.getElementById(`${planet}-age-display`);
-            if (showcaseElement) {
-                showcaseElement.textContent = `${age} years old`;
-            }
-
-            // Update summary section displays
-            const summaryElement = document.getElementById(`${planet}-age`);
-            if (summaryElement) {
-                summaryElement.textContent = `${age} years old`;
+            // Hide the placeholder and error message
+            placeholderElement.style.display = 'none';
+            errorElement.style.display = 'none';
+            
+            // Show the video and close button
+            videoElement.style.display = 'block';
+            
+            // Show the close button
+            const closeButton = videoElement.nextElementSibling;
+            closeButton.style.display = 'block';
+            
+            // Attempt to play the video
+            const playPromise = videoElement.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error('Video play failed:', error);
+                    errorElement.style.display = 'block';
+                    videoElement.style.display = 'none';
+                    placeholderElement.style.display = 'block';
+                    closeButton.style.display = 'none';
+                });
             }
         }
-    }
-</script>
+
+        function stopVideo(videoId, placeholderId) {
+            const videoElement = document.getElementById(videoId);
+            const placeholderElement = document.getElementById(placeholderId);
+            const closeButton = document.querySelector(`#${videoId} + .close-video`);
+            
+            videoElement.pause();
+            videoElement.currentTime = 0;
+            videoElement.style.display = 'none';
+            placeholderElement.style.display = 'block';
+            closeButton.style.display = 'none';
+        }
+
+        // Setup video error handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                video.addEventListener('error', function() {
+                    const videoId = video.id;
+                    const planetName = videoId.replace('Video', '');
+                    const errorElement = document.getElementById(planetName + 'Error');
+                    
+                    console.error('Video load error:', video.error);
+                    errorElement.style.display = 'block';
+                    video.style.display = 'none';
+                    
+                    // Show placeholder again if video fails
+                    const placeholder = document.getElementById(planetName + 'Placeholder');
+                    if (placeholder) {
+                        placeholder.style.display = 'block';
+                    }
+                });
+            });
+        });
+
+        // Planet Age Calculator
+        const planetOrbitalPeriods = {
+            mercury: 0.24,
+            venus: 0.62,
+            earth: 1,
+            mars: 1.88,
+            jupiter: 11.86,
+            saturn: 29.46,
+            uranus: 84.01,
+            neptune: 164.8,
+            pluto: 248.6
+        };
+
+        function calculatePlanetAges() {
+            const earthAge = parseFloat(document.getElementById("earthAge").value);
+            if (isNaN(earthAge) || earthAge <= 0) {
+                alert("Please enter a valid age (positive number).");
+                return;
+            }
+
+            // Update both the individual planet displays and the summary section
+            for (const planet in planetOrbitalPeriods) {
+                const age = (earthAge / planetOrbitalPeriods[planet]).toFixed(2);
+                
+                // Update individual planet showcase displays
+                const showcaseElement = document.getElementById(`${planet}-age-display`);
+                if (showcaseElement) {
+                    showcaseElement.textContent = `${age} years old`;
+                }
+
+                // Update summary section displays
+                const summaryElement = document.getElementById(`${planet}-age`);
+                if (summaryElement) {
+                    summaryElement.textContent = `${age} years old`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
